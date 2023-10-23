@@ -1,4 +1,4 @@
-#include "input.h"
+#include "../include/input.h"
 
 // this function takes in the BLIF text from the user and returns the corresponding boolean expression
 BooleanExpression getInputCircuit()

@@ -1,4 +1,4 @@
-#include "specs.h"
+#include "../include/specs.h"
 
 // Function to return the design as a canonical SOP
 void canonicalSOP(BooleanExpression expression)

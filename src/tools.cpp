@@ -1,4 +1,4 @@
-#include "tools.h"
+#include "../include/tools.h"
 
 vector<int> getMaxterms(BooleanExpression expression)
 {
