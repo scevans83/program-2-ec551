@@ -57,7 +57,7 @@ int main()
     cout << " 9. Report the number of ON-Set minterms\n";
     cout << "10. Report the number of ON-Set maxterms\n";
     cout << "11. Draw SOP circuit as ASCII";
-    cout << "\nEnter choice (1-10): ";
+    cout << "\nEnter choice (1-11): ";
 
     int choice2;
     cin >> choice2;
