@@ -530,7 +530,7 @@ void asciiPOS(BooleanExpression expression)
     // append "-------|&&" to the end of each line
     bool result = true;
     // Print the lines and append the AND gate
-    for (int m = 0; m < expression.minterms.size(); ++m)
+    for (int m = 0; m < expression.maxterms.size(); ++m)
     {
         for (int i = 0; i < expression.variables.size(); ++i)
         {
