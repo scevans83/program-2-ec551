@@ -17,5 +17,6 @@ vector<string> primeImplicants(BooleanExpression expression);
 vector<string> essentialPrimeImplicants(BooleanExpression expression);
 void onSetMinterms(BooleanExpression expression);
 void onSetMaxterms(BooleanExpression expression);
+void asciiSOP(BooleanExpression expression);
 
 #endif // SPECS_H
