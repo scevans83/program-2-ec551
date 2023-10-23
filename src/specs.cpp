@@ -415,3 +415,73 @@ void onSetMaxterms(BooleanExpression expression)
 {
     cout << "number of ON-Set maxterms: " << expression.maxterms.size() << endl;
 }
+
+//function to show ascii SOP circuit diagram
+void asciiSOP(BooleanExpression expression)
+{
+    vector<vector<string>> lines(expression.minterms.size(), vector<string>(expression.variables.size(), ""));
+
+    for (int m = 0; m < expression.minterms.size(); ++m)
+    {
+        int minterm = expression.minterms[m];
+        string binary = decimalToBinary(minterm, expression.variables.size());
+
+        for (int i = 0; i < binary.size(); ++i)
+        {
+            if (binary[i] == '1')
+            {
+                lines[m][i] += "-------";
+            }
+            else
+            {
+                lines[m][i] += "--|>o--";
+            }
+        }
+
+        // Append a single "|&&" to each line for each AND gate
+        for (string &line : lines[m])
+        {
+            line += "|&&";
+        }
+    }
+
+    // Print the lines and append the OR gate
+    for (int m = 0; m < expression.minterms.size(); ++m)
+    {
+        for (int i = 0; i < expression.variables.size(); ++i)
+        {
+            cout << expression.variables[i] << ": " << lines[m][i];
+            // if this line is halfway through the minterm, print the or gate and expression
+            if (i == expression.variables.size() / 2)
+            {
+                cout << "}-|OR--- ";
+                for (unsigned int i = 0; i < expression.minterms.size(); i++)
+                {
+                    int minterm = expression.minterms[i];
+                    string binary = bitset<16>(minterm).to_string();
+                    binary = binary.substr(16 - expression.variables.size());
+
+                    for (unsigned int j = 0; j < binary.size(); j++)
+                    {
+                        if (binary[j] == '0')
+                        {
+                            cout << "!" << expression.variables[j];
+                        }
+                        else
+                        {
+                            cout << expression.variables[j];
+                        }
+                    }
+
+                    if (i != expression.minterms.size() - 1)
+                    {
+                        cout << " + ";
+                    }
+                }
+                cout << endl;
+            }
+            else
+                cout << endl;
+        }
+    }
+}
