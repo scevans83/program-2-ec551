@@ -46,16 +46,17 @@ int main()
         10. Report the number of ON-Set maxterms
     */
     cout << "\nWhat would you like to do with this data?\n";
-    cout << "1. Return the design as a canonical SOP\n";
-    cout << "2. Return the design as a canonical POS\n";
-    cout << "3. Return the design INVERSE as a canonical SOP\n";
-    cout << "4. Return the design INVERSE as a canonical POS\n";
-    cout << "5. Return a minimized number of literals representation in SOP\n";
-    cout << "6. Return a minimized number of literals representation in POS\n";
-    cout << "7. Report the number of Prime Implicants\n";
-    cout << "8. Report the number of Essential Prime Implicants\n";
-    cout << "9. Report the number of ON-Set minterms\n";
+    cout << " 1. Return the design as a canonical SOP\n";
+    cout << " 2. Return the design as a canonical POS\n";
+    cout << " 3. Return the design INVERSE as a canonical SOP\n";
+    cout << " 4. Return the design INVERSE as a canonical POS\n";
+    cout << " 5. Return a minimized number of literals representation in SOP\n";
+    cout << " 6. Return a minimized number of literals representation in POS\n";
+    cout << " 7. Report the number of Prime Implicants\n";
+    cout << " 8. Report the number of Essential Prime Implicants\n";
+    cout << " 9. Report the number of ON-Set minterms\n";
     cout << "10. Report the number of ON-Set maxterms\n";
+    cout << "11. Draw SOP circuit as ASCII";
     cout << "\nEnter choice (1-10): ";
 
     int choice2;
@@ -98,6 +99,9 @@ int main()
         break;
     case 10:
         onSetMaxterms(expression);
+        break;
+    case 11:
+        asciiSOP(expression);
         break;
     default:
         cerr << "Invalid choice. Please try again." << endl;
