@@ -494,3 +494,90 @@ void asciiSOP(BooleanExpression expression)
         }
     }
 }
+
+// function to show ascii POS circuit diagram
+void asciiPOS(BooleanExpression expression)
+{
+    vector<vector<string>> lines(expression.maxterms.size(), vector<string>(expression.variables.size(), ""));
+
+    for (int m = 0; m < expression.maxterms.size(); ++m)
+    {
+        int maxterm = expression.maxterms[m];
+        string binary = decimalToBinary(maxterm, expression.variables.size());
+
+        bool first = true;
+        for (int i = 0; i < binary.size(); ++i)
+        {
+            if (binary[i] == '0')
+            {
+                lines[m][i] += "-------";
+            }
+            else
+            {
+                lines[m][i] += "--|>o--";
+            }
+            lines[m][i] += "|OR";
+            if (first)
+            {
+                lines[m][i] += "-------|&&";
+                first = false;
+            }
+            else
+                lines[m][i] += "       |&&";
+        }
+    }
+
+    // append "-------|&&" to the end of each line
+    bool result = true;
+    // Print the lines and append the AND gate
+    for (int m = 0; m < expression.minterms.size(); ++m)
+    {
+        for (int i = 0; i < expression.variables.size(); ++i)
+        {
+            cout << expression.variables[i] << ": " << lines[m][i];
+            cout << endl;
+        }
+        // if this line is halfway through the minterm, print the or gate and expression
+        if (result)
+        {
+            result = false;
+            cout << "                    |&&----- ";
+            for (unsigned int i = 0; i < pow(2, expression.variables.size()); i++)
+            {
+                // Check if i is not a minterm
+                if (find(expression.minterms.begin(), expression.minterms.end(), i) == expression.minterms.end())
+                {
+                    string binary = bitset<16>(i).to_string();
+                    binary = binary.substr(16 - expression.variables.size());
+
+                    cout << '(';
+                    for (unsigned int j = 0; j < binary.size(); j++)
+                    {
+                        if (binary[j] == '0')
+                        {
+                            cout << expression.variables[j];
+                            if (j != binary.size() - 1)
+                                cout << " + ";
+                        }
+                        else
+                        {
+                            cout << "!" << expression.variables[j];
+                            if (j != binary.size() - 1)
+                                cout << " + ";
+                        }
+                    }
+                    cout << ")";
+                    if (i != pow(2, expression.variables.size()) - 1)
+                    {
+                        cout << " * ";
+                    }
+                }
+            }
+            cout << endl;
+        }
+        else
+        {
+            cout << "                    |&&" << endl;
+        }
+    }
+}
