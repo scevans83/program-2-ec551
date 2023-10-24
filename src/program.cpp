@@ -23,7 +23,18 @@ int main()
     }
     else if (choice == 2)
     {
-        cout << "\nEnter the digital combinational logic circuit in BLIF format: \n";
+        cout << "\nEnter the digital combinational logic circuit following the below example: \n";
+        cout << "(for more information, see https://course.ece.cmu.edu/~ee760/760docs/blif.pdf)\n";
+        cout << "\n.model simple_model\n";
+        cout << ".inputs a b c\n";
+        cout << ".outputs f\n";
+        cout << ".names a b c f\n";
+        cout << "001 1\n";
+        cout << "011 1\n";
+        cout << "100 1\n";
+        cout << "\n.end\n";
+        cout << "\nyour input:";
+        cout << endl;
         expression = getInputCircuit();
     }
     else
