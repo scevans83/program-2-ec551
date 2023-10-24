@@ -8,7 +8,7 @@ int main()
     cout << "What would you like to do?\n";
     cout << "1. Input a Boolean algebraic function\n";
     cout << "2. Input a digital combinational logic circuit\n";
-    cout << "Enter choice (1 or 2): ";
+    cout << "\nEnter choice (1 or 2): ";
 
     int choice;
     cin >> choice;
@@ -17,12 +17,24 @@ int main()
     string inputData;
     if (choice == 1)
     {
-        cout << "Enter the Boolean algebraic function: ";
+        cout << "\nEnter the Boolean algebraic function: ";
         getline(cin, inputData);
         expression = parseBoolean(inputData);
     }
     else if (choice == 2)
     {
+        cout << "\nEnter the digital combinational logic circuit following the below example: \n";
+        cout << "(for more information, see https://course.ece.cmu.edu/~ee760/760docs/blif.pdf)\n";
+        cout << "\n.model simple_model\n";
+        cout << ".inputs a b c\n";
+        cout << ".outputs f\n";
+        cout << ".names a b c f\n";
+        cout << "001 1\n";
+        cout << "011 1\n";
+        cout << "100 1\n";
+        cout << "\n.end\n";
+        cout << "\nyour input:";
+        cout << endl;
         expression = getInputCircuit();
     }
     else
@@ -56,15 +68,15 @@ int main()
     cout << " 8. Report the number of Essential Prime Implicants\n";
     cout << " 9. Report the number of ON-Set minterms\n";
     cout << "10. Report the number of ON-Set maxterms\n";
-    cout << "11. Draw SOP circuit as ASCII";
-    cout << "12. Draw POS circuit as ASCII";
+    cout << "11. Draw SOP circuit as ASCII\n";
+    cout << "12. Draw POS circuit as ASCII\n";
     cout << "\nEnter choice (1-12): ";
 
     int choice2;
     cin >> choice2;
     cin.ignore();
     vector<string> PI = primeImplicants(expression);
-
+    cout << endl;
     switch (choice2)
     {
     case 1:

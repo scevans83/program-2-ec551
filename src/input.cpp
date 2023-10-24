@@ -1,13 +1,59 @@
 #include "../include/input.h"
 
-// this function takes in the BLIF text from the user and returns the corresponding boolean expression
+using namespace std;
+
 BooleanExpression getInputCircuit()
 {
     BooleanExpression expression;
     string next;
+    string modelName = "";
+    vector<string> truthTable;
+
+    getline(cin, next);
+
     while (true)
     {
-        getline(cin, next);
+        // debug
+        // cout << "Debug: Value of 'next' is: " << next << endl;
+
+        if (next.substr(0, 8) == ".inputs ")
+        {
+            // cout << "Debug: Inside .inputs block" << endl;
+
+            string inputs = next.substr(8);
+            stringstream ss(inputs);
+            string token;
+
+            while (getline(ss, token, ' '))
+            {
+                if (!token.empty())
+                {
+                    expression.variables.push_back(token[0]);
+                }
+            }
+
+            // debug
+            /* cout << "Debug: Variables parsed: ";
+            for (char var : expression.variables)
+            {
+                cout << var << " ";
+            }
+            cout << endl; */
+
+            truthTable = generateTruthTable(expression.variables.size());
+
+            // debug
+            /* cout << "Debug: Truth table generated: ";
+            for (const string &row : truthTable)
+            {
+                cout << row << " ";
+            }
+            cout << endl; */
+        }
+        else
+        {
+            // cout << "Debug: Skipped .inputs block" << endl;
+        }
         if (next == ".end")
         {
             break;
@@ -15,52 +61,77 @@ BooleanExpression getInputCircuit()
 
         if (next.substr(0, 7) == ".model ")
         {
-            string modelName = next.substr(7);
-            cout << "Model name: " << modelName << endl;
+            modelName = next.substr(7);
         }
 
-        if (next.substr(0, 8) == ".inputs ")
+        if (next.substr(0, 7) == ".names ")
         {
-            string inputs = next.substr(8);
-            stringstream ss(inputs);
+            string names = next.substr(7);
+            stringstream ss(names);
             string token;
+            vector<char> varsInNames;
             while (getline(ss, token, ' '))
             {
                 if (!token.empty())
                 {
-                    expression.variables.push_back(token[0]); // assuming single character variable names- may have to change
+                    varsInNames.push_back(token[0]);
                 }
             }
-        }
-
-        if (next.substr(0, 9) == ".outputs ")
-        {
-        }
-
-        if (next[next.length() - 1] == '1')
-        {
-            if (next.find('-') != string::npos)
+            while (true)
             {
-                string minterm0 = next.substr(0, next.length() - 1);
-                string minterm1 = next.substr(0, next.length() - 1);
-                for (int i = 0; i < minterm0.length(); i++)
+                getline(cin, next); // Read the minterm or maxterm line
+                // if line is blank break
+                if (next.empty())
                 {
-                    if (minterm0[i] == '-')
+                    break;
+                }
+                for (const auto &row : truthTable)
+                {
+                    // cout << "Debug: Checking row " << row << " against " << next << endl;
+                    bool match = true;
+                    string mintermValues = next.substr(0, next.length() - 2);
+                    for (int i = 0; i < varsInNames.size(); ++i)
                     {
-                        minterm0[i] = '0';
-                        minterm1[i] = '1';
+                        int pos = find(expression.variables.begin(), expression.variables.end(), varsInNames[i]) - expression.variables.begin();
+                        if (row[pos] != mintermValues[i])
+                        {
+                            // debug
+                            // cout << "Debug: " << row[pos] << " != " << mintermValues[i] << endl;
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match && next[next.length() - 1] == '1')
+                    {
+                        // debug
+                        // cout << "Debug: Matched " << row << " to " << next << "  adding as minterm" << endl;
+
+                        expression.minterms.push_back(stoi(row, nullptr, 2));
+                    }
+                    else if (match && next[next.length() - 1] == '0')
+                    {
+                        // debug
+                        // cout << "Debug: Matched " << row << " to " << next << "  adding as maxterm" << endl;
+                        expression.maxterms.push_back(stoi(row, nullptr, 2));
                     }
                 }
-                expression.minterms.push_back(stoi(minterm0, nullptr, 2));
-                expression.minterms.push_back(stoi(minterm1, nullptr, 2));
-            }
-            else
-            {
-                string minterm = next.substr(0, next.length() - 1);
-                expression.minterms.push_back(stoi(minterm, nullptr, 2));
             }
         }
+        /*         // debug
+                for (int i = 0; i < expression.minterms.size(); i++)
+                {
+                    cout << expression.minterms[i] << " ";
+                } */
+        getline(cin, next);
     }
+
+    if (!modelName.empty())
+    {
+        cout << endl
+             << "Circuit Name: " << modelName << endl;
+    }
+
     return expression;
 }
 

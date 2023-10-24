@@ -1,5 +1,21 @@
 #include "../include/tools.h"
 
+vector<string> generateTruthTable(int numVars)
+{
+    // debug
+    // cout << "\nGeneratingTruthTable\n\n";
+    int numRows = pow(2, numVars);
+    vector<string> truthTable;
+
+    for (int i = 0; i < numRows; ++i)
+    {
+        string row = decimalToBinary(i, numVars);
+        truthTable.push_back(row);
+    }
+
+    return truthTable;
+}
+
 vector<int> getMaxterms(BooleanExpression expression)
 {
     vector<int> maxterms;

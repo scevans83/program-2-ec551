@@ -39,5 +39,6 @@ vector<string> selectMinimumLiterals(vector<int> uncoveredMinterms, vector<strin
 vector<string> selectMinimumLiteralsMaxterm(vector<int> uncoveredMaxterms, vector<string> primeImplicants);
 vector<string> primeImplicantsForMaxterms(BooleanExpression expression);
 bool isCoveredByMaxterm(string maxterm, string primeImplicant);
+vector<string> generateTruthTable(int numVars);
 
 #endif // TOOLS_H

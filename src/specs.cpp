@@ -420,13 +420,12 @@ void onSetMaxterms(BooleanExpression expression)
 void asciiSOP(BooleanExpression expression)
 {
     vector<vector<string>> lines(expression.minterms.size(), vector<string>(expression.variables.size(), ""));
-
+    int middle = expression.variables.size() / 2;
     for (int m = 0; m < expression.minterms.size(); ++m)
     {
         int minterm = expression.minterms[m];
         string binary = decimalToBinary(minterm, expression.variables.size());
 
-        bool first = true;
         for (int i = 0; i < binary.size(); ++i)
         {
             if (binary[i] == '1')
@@ -438,18 +437,24 @@ void asciiSOP(BooleanExpression expression)
                 lines[m][i] += "--|>o--";
             }
             lines[m][i] += "|&&";
-            if (first)
+            if (i == middle)
             {
                 lines[m][i] += "-------|OR";
-                first = false;
             }
             else
-                lines[m][i] += "       |OR";
+            {
+                if (m == 0 && i < middle)
+                    lines[m][i] += "          ";
+                else if (m == expression.minterms.size() - 1 && i > middle)
+                    lines[m][i] += "          ";
+                else
+                    lines[m][i] += "       |OR";
+            }
         }
     }
 
-    // append "-------|OR" to the end of each line
-    bool result = true;
+    // append "-------|OR" to the end of some lines
+    int middleMin = (expression.minterms.size() / 2) - 1;
     // Print the lines and append the OR gate
     for (int m = 0; m < expression.minterms.size(); ++m)
     {
@@ -459,9 +464,8 @@ void asciiSOP(BooleanExpression expression)
             cout << endl;
         }
         // if this line is halfway through the minterm, print the or gate and expression
-        if (result)
+        if (m == middleMin)
         {
-            result = false;
             cout << "                    |OR----- ";
             for (unsigned int i = 0; i < expression.minterms.size(); i++)
             {
@@ -473,7 +477,7 @@ void asciiSOP(BooleanExpression expression)
                 {
                     if (binary[j] == '0')
                     {
-                        cout << "!" << expression.variables[j];
+                        cout << expression.variables[j] << "'";
                     }
                     else
                     {
@@ -490,7 +494,11 @@ void asciiSOP(BooleanExpression expression)
         }
         else
         {
-            cout << "                    |OR" << endl;
+            if (m == expression.minterms.size() - 1)
+                cout << endl
+                     << endl;
+            else
+                cout << "                    |OR" << endl;
         }
     }
 }
@@ -499,7 +507,7 @@ void asciiSOP(BooleanExpression expression)
 void asciiPOS(BooleanExpression expression)
 {
     vector<vector<string>> lines(expression.maxterms.size(), vector<string>(expression.variables.size(), ""));
-
+    int middle = expression.variables.size() / 2;
     for (int m = 0; m < expression.maxterms.size(); ++m)
     {
         int maxterm = expression.maxterms[m];
@@ -517,18 +525,21 @@ void asciiPOS(BooleanExpression expression)
                 lines[m][i] += "--|>o--";
             }
             lines[m][i] += "|OR";
-            if (first)
+            if (i == middle)
             {
                 lines[m][i] += "-------|&&";
-                first = false;
             }
+            else if (m == 0 && i < middle)
+                lines[m][i] += "          ";
+            else if (m == expression.maxterms.size() - 1 && i > middle)
+                lines[m][i] += "          ";
             else
                 lines[m][i] += "       |&&";
         }
     }
 
     // append "-------|&&" to the end of each line
-    bool result = true;
+    int middleMax = (expression.maxterms.size() / 2) - 1;
     // Print the lines and append the AND gate
     for (int m = 0; m < expression.maxterms.size(); ++m)
     {
@@ -538,9 +549,8 @@ void asciiPOS(BooleanExpression expression)
             cout << endl;
         }
         // if this line is halfway through the minterm, print the or gate and expression
-        if (result)
+        if (m == middleMax)
         {
-            result = false;
             cout << "                    |&&----- ";
             for (unsigned int i = 0; i < pow(2, expression.variables.size()); i++)
             {
@@ -561,7 +571,7 @@ void asciiPOS(BooleanExpression expression)
                         }
                         else
                         {
-                            cout << "!" << expression.variables[j];
+                            cout << expression.variables[j] << "'";
                             if (j != binary.size() - 1)
                                 cout << " + ";
                         }
@@ -577,7 +587,11 @@ void asciiPOS(BooleanExpression expression)
         }
         else
         {
-            cout << "                    |&&" << endl;
+            if (m == expression.maxterms.size() - 1)
+                cout << endl
+                     << endl;
+            else
+                cout << "                    |&&" << endl;
         }
     }
 }
