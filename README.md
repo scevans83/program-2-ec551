@@ -1,7 +1,6 @@
-
 # Boolean Algebraic Functions and Digital Logic Circuits Tool
 
-Sophia Evans
+Sophia Evans and Aidan Nowakowski
 
 ## Table of Contents
 
@@ -17,6 +16,7 @@ This tool is designed for manipulating Boolean algebraic functions and digital c
 ### User Input
 
 User has the option of inputting either:
+
 1. A Boolean expression in (variables)(minterms) format (e.g. `(a,b,c)(1,3,4)`)
 2. A digital combinational logic circuit in BLIF format
 
@@ -29,12 +29,12 @@ Example:
     001 1
     011 1
     100 1
-    
+
     .end
 
 ### Parsing Input and Storing Values
 
-The inputted description is stored as a `BooleanExpression`, which contains vectors for `variables`, `minterms`, and `maxterms`. 
+The inputted description is stored as a `BooleanExpression`, which contains vectors for `variables`, `minterms`, and `maxterms`.
 
 For a Boolean expression in minterms format, the tool extracts variables and minterms from the input string and stores them in the BooleanExpression object. The vector of maxterms is calculated by determining what possible values (given the number of variables) are not present in the minterms vector.
 
@@ -63,7 +63,7 @@ The repository is organized into two main directories: `include` and `src`.
 
 ### `include`
 
-This directory contains all the header files. 
+This directory contains all the header files.
 
 - `input.h`: Handles parsing of Boolean expressions and BLIF text.
 - `program.h`: Contains the main program logic.
@@ -79,7 +79,6 @@ This directory contains the implementation of the functions declared in the head
 - `specs.cpp`: Implements various forms of Boolean expression manipulation, such as constructing canonical and minimized forms.
 - `tools.cpp`: Implements utility functions for manipulating the Boolean expressions.
 
-
 ## How to Read the Code
 
 1. **Main Logic**: The `program.cpp` file in the `src` directory contains the main logic of the application, including handling user input and choices for operations.
@@ -87,7 +86,11 @@ This directory contains the implementation of the functions declared in the head
 3. **Utilities and Input**: The `tools.cpp` and `input.cpp` files contain implementations for utility functions and input parsing, respectively.
 
 ## Compile Instructions
+
 Use `-std=c++20` compile flag for best results.
+
+(to run test.cpp: g++ -std=c++20 test.cpp ./src/LUT.cpp ./src/tools.cpp -o test)
+(to run main.cpp: g++ -std=c++20 main.cpp -o main)
 
 ## References
 

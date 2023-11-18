@@ -244,3 +244,46 @@ bool isCoveredByMaxterm(string maxterm, string primeImplicant)
     }
     return true;
 }
+
+bool evaluateProductTerm(const string &term, const string &binaryInput, const map<char, int> &inputMap)
+{
+    bool result = true;    // result starts as true because it is an AND operation
+    bool negation = false; // flag for if variable is NOT'd
+
+    // for each input variable in the term, evaluate it and AND it with the result so far
+    for (char var : term)
+    {
+        if (var == '*' || var == ' ')
+            continue; // skip '*' and spaces
+        if (var == '!')
+        {
+            negation = true;
+            continue;
+        }
+
+        // use map to find index of the variable
+        auto iterator = inputMap.find(var);
+        if (iterator == inputMap.end())
+        {
+            cerr << "Variable " << var << " not found in map." << endl;
+            return false;
+        }
+        int index = iterator->second;
+        bool varValue = binaryInput[index] == '1';
+        result = result && (negation ? !varValue : varValue);
+        negation = false; // reset for next loop
+    }
+
+    return result;
+}
+
+// converts a vector of boolean values to a string
+string convertBoolVecToString(const vector<bool> &vec)
+{
+    string result;
+    for (bool val : vec)
+    {
+        result += (val ? "1" : "0");
+    }
+    return result;
+}

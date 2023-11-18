@@ -40,5 +40,7 @@ vector<string> selectMinimumLiteralsMaxterm(vector<int> uncoveredMaxterms, vecto
 vector<string> primeImplicantsForMaxterms(BooleanExpression expression);
 bool isCoveredByMaxterm(string maxterm, string primeImplicant);
 vector<string> generateTruthTable(int numVars);
+bool evaluateProductTerm(const string &term, const string &binaryInput, const map<char, int> &inputMap);
+string convertBoolVecToString(const vector<bool> &vec);
 
 #endif // TOOLS_H
