@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "include/LUT.h"
-#include "include/FPGA.h"
+#include "../include/LUT.h"
+#include "../include/FPGA.h"
 
 using namespace std;
 

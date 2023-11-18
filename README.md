@@ -89,8 +89,8 @@ This directory contains the implementation of the functions declared in the head
 
 Use `-std=c++20` compile flag for best results.
 
-(to run test.cpp: g++ -std=c++20 test.cpp ./src/LUT.cpp ./src/tools.cpp -o test)
-(to run main.cpp: g++ -std=c++20 main.cpp -o main)
+(to run test.cpp: g++ -std=c++20 ./src/test.cpp ./src/LUT.cpp ./src/tools.cpp -o test)
+(to run main.cpp: g++ -std=c++20 ./src/main.cpp -o main)
 
 ## References
 

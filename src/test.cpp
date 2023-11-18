@@ -1,7 +1,7 @@
 #include <iostream>
-#include "include/LUT.h"
-#include "include/FPGA.h"
-#include "include/tools.h"
+#include "../include/LUT.h"
+#include "../include/FPGA.h"
+#include "../include/tools.h"
 
 using namespace std;
 
