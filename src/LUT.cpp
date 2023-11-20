@@ -134,6 +134,22 @@ int LUT::getBitSize() const
     return bit_size;
 }
 
+vector<bool> LUT::getTruthTable() const
+{
+    return truth_table;
+}
+
+vector<const LUT *> LUT::getInputConnections() const
+{
+    return input_connections;
+}
+
+
+LUT* LUT::getOutputConnection() const
+{
+    return output_connection;
+}
+
 const string &LUT::getName() const
 {
     return name;

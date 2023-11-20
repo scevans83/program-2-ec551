@@ -39,6 +39,15 @@ public:
     // Method to get size of lut
     int getBitSize() const;
 
+    // Method to get truth table
+    vector<bool> getTruthTable() const;
+
+    // Method to get input connections
+    vector<const LUT *> getInputConnections() const;
+
+    // Method to get output connection
+    LUT* getOutputConnection() const;
+
     // Method to get name of lut
     const string &getName() const;
 

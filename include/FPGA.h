@@ -30,8 +30,21 @@ public:
     // Method to print the connections of all LUTs
     void printConnections() const;
 
+    // Method to generate bitstream from current LUTs
+    string generateBitstream();
+
+    // Method to write bitstream to a file
+    void writeBitstreamToFile();
+
+    // Helper functions to generate bitstream
+    string intToBinaryString(int num);
+
+    void padWithZeros(string& str, int max_size);
+
 private:
     vector<LUT *> luts;
+    vector<LUT *> input_luts;
+    vector<LUT *> output_luts;
     vector<bool> external_inputs;
     vector<bool> external_outputs;
 };

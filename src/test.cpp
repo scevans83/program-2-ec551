@@ -60,5 +60,6 @@ int main()
         cout << "| " << (result ? "1" : "0") << endl;
     }
 
+    
     return 0;
 }
