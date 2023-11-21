@@ -24,6 +24,8 @@ public:
     // Method to set the boolean expression for the LUT
     void setBooleanExpression(const string &expression);
 
+    void setTruthTable(const vector<bool> &truth_table);
+
     // Method to evaluate the LUT based on input
     bool evaluate(const vector<bool> &inputs) const;
 
@@ -46,10 +48,14 @@ public:
     vector<const LUT *> getInputConnections() const;
 
     // Method to get output connection
-    LUT* getOutputConnection() const;
+    LUT *getOutputConnection() const;
 
     // Method to get name of lut
     const string &getName() const;
+
+    bool getIsInput() const;
+
+    bool getIsOutput() const;
 
 private:
     string name;

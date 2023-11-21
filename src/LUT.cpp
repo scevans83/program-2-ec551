@@ -67,6 +67,11 @@ void LUT::setBooleanExpression(const string &expression)
     }
 }
 
+void LUT::setTruthTable(const vector<bool> &truth_table)
+{
+    this->truth_table = truth_table;
+}
+
 bool LUT::evaluate(const vector<bool> &inputs) const
 {
     // convert vector<bool> to string
@@ -144,8 +149,7 @@ vector<const LUT *> LUT::getInputConnections() const
     return input_connections;
 }
 
-
-LUT* LUT::getOutputConnection() const
+LUT *LUT::getOutputConnection() const
 {
     return output_connection;
 }
@@ -153,4 +157,14 @@ LUT* LUT::getOutputConnection() const
 const string &LUT::getName() const
 {
     return name;
+}
+
+bool LUT::getIsInput() const
+{
+    return is_input;
+}
+
+bool LUT::getIsOutput() const
+{
+    return is_output;
 }
