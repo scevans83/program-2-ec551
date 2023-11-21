@@ -65,6 +65,7 @@ private:
     vector<bool> truth_table;              // truth table stored in LUT
     vector<const LUT *> input_connections; // vector of input LUTs/external inputs
     LUT *output_connection;                // output LUT/external output
+    vector<char> input_names;
 };
 
 #endif // LUT_H
