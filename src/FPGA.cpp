@@ -1,5 +1,6 @@
 #include "../include/FPGA.h"
 
+
 FPGA::FPGA(int num_LUTs, int bit_size)
 {
     for (int i = 0; i < num_LUTs; ++i)
@@ -51,6 +52,7 @@ void FPGA::printConnections() const
 
     for (size_t i = 0; i < luts.size(); ++i)
     {
+        cout << "LUT number " << i << "'s connections: " << endl;
         luts[i]->printConnections();
     }
 }
@@ -186,8 +188,10 @@ string FPGA::generateBitstream()
         bit_stream += output_connections;
     }
 
+    cout << bit_stream << endl;
     return bit_stream;
 }
+
 
 void FPGA::writeBitstreamToFile()
 {
@@ -411,5 +415,51 @@ void FPGA::addOutputs(int bit_size)
     for (int i = 0; i < bit_size; ++i)
     {
         output_luts.emplace_back(new LUT(false, "OUT" + to_string(i)));
+    }
+}
+
+void FPGA::makeConnections(vector<LUT *> luts){
+    for(int i = 0; i < luts.size(); ++i){
+
+        //Make input connections for lut[i]
+        vector <char> lut_input_names = luts[i]->getInputNames();
+        //iterate over input names
+        for(int j = 0; j < lut_input_names.size(); ++j){
+            //check if name is in LUT vector
+            for(int k = 0; k < luts.size(); ++k){ 
+                //if equal make the connection, make sure lut is not connecting to itself
+                if((lut_input_names[j] == luts[k]->getName()[0]) && (i != k)){
+                    //connect lut at index k, to lut[i] at lut[i]'s input port j
+                    connectInputToLUT(i, j, luts[k]);
+                }
+            }
+        }
+        //repeat for input_luts vector
+        for(int j = 0; j < lut_input_names.size(); ++j){
+            //check if name is in input LUT vector
+            for(int k = 0; k < input_luts.size(); ++k){ 
+                //if equal make the connection
+                if((lut_input_names[j] == input_luts[k]->getName()[0])){
+                    //connect lut at index k, to lut[i] at lut[i]'s input port j
+                    connectInputToLUT(i, j, input_luts[k]);
+                }
+            }
+        }
+
+        //Make output connection
+        for(int j = 0; j < luts.size(); ++j){ 
+            //lut name should be output variable, comapre with lut names
+            if((luts[i]->getName() == luts[j]->getName()) && (i != j)){
+                connectOutputOfLUT(i, luts[j]);
+            }
+        }
+
+        //repeat for output_luts vector
+        for(int j = 0; j < output_luts.size(); ++j){
+            if((luts[i]->getName() == output_luts[j]->getName())){
+                connectOutputOfLUT(i, output_luts[j]);
+            }
+        }
+
     }
 }

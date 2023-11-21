@@ -115,7 +115,7 @@ void LUT::printConnections() const
     {
         if (input_connections[i])
         {
-            cout << input_connections[i] << " "; // print out what is connected there may need to name LUTs/Inputs
+            cout << input_connections[i]->getName() << " "; // print out what is connected there may need to name LUTs/Inputs
         }
         else
         {
@@ -126,7 +126,7 @@ void LUT::printConnections() const
 
     if (output_connection)
     {
-        cout << "Output: " << output_connection << endl;
+        cout << "Output: " << output_connection->getName() << endl;
     }
     else
     {
@@ -167,4 +167,9 @@ bool LUT::getIsInput() const
 bool LUT::getIsOutput() const
 {
     return is_output;
+}
+
+vector<char> LUT::getInputNames() const
+{
+    return input_names;
 }
