@@ -19,18 +19,27 @@ LUT::~LUT()
 void LUT::setBooleanExpression(const string &expression)
 {
     // note: expecting expression in F(a,b,c,d) = a*b+c*d+... format
+
     // get vector of input variables from the part of the expression inside the first ()
-    vector<char> inputVars;
+    vector<string> inputVars;
+    // get substring before first ( and set it as the new LUT name
+    name = expression.substr(0, expression.find("("));
+
+    // get substring between first () and remove commas, push to inputVars
     string inputVarsString = expression.substr(expression.find("(") + 1, expression.find(")") - expression.find("(") - 1);
     for (char c : inputVarsString)
     {
         if (c != ',')
         {
-            inputVars.push_back(c);
+            inputVars.push_back(string(1, c));
         }
     }
+
+    // set input_names as inputVars
+    input_names = inputVars;
+
     // create map to associate input variables with index
-    map<char, int> inputMap;
+    map<string, int> inputMap;
     for (int i = 0; i < inputVars.size(); i++)
     {
         inputMap[inputVars[i]] = i;
