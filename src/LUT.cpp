@@ -19,18 +19,27 @@ LUT::~LUT()
 void LUT::setBooleanExpression(const string &expression)
 {
     // note: expecting expression in F(a,b,c,d) = a*b+c*d+... format
+
     // get vector of input variables from the part of the expression inside the first ()
-    vector<char> inputVars;
+    vector<string> inputVars;
+    // get substring before first ( and set it as the new LUT name
+    name = expression.substr(0, expression.find("("));
+
+    // get substring between first () and remove commas, push to inputVars
     string inputVarsString = expression.substr(expression.find("(") + 1, expression.find(")") - expression.find("(") - 1);
     for (char c : inputVarsString)
     {
         if (c != ',')
         {
-            inputVars.push_back(c);
+            inputVars.push_back(string(1, c));
         }
     }
+
+    // set input_names as inputVars
+    input_names = inputVars;
+
     // create map to associate input variables with index
-    map<char, int> inputMap;
+    map<string, int> inputMap;
     for (int i = 0; i < inputVars.size(); i++)
     {
         inputMap[inputVars[i]] = i;
@@ -67,6 +76,11 @@ void LUT::setBooleanExpression(const string &expression)
     }
 }
 
+void LUT::setTruthTable(const vector<bool> &truth_table)
+{
+    this->truth_table = truth_table;
+}
+
 bool LUT::evaluate(const vector<bool> &inputs) const
 {
     // convert vector<bool> to string
@@ -91,6 +105,7 @@ void LUT::connectInput(int input_index, const LUT *source_LUT)
     if (input_index >= 0 && input_index < bit_size)
     {
         input_connections[input_index] = source_LUT;
+        cout << "Connecting " << input_index << " of " << name << " to " << source_LUT->getName() << endl;
     }
     else
     {
@@ -105,12 +120,12 @@ void LUT::connectOutput(LUT *target_LUT)
 
 void LUT::printConnections() const
 {
-    cout << "Inputs: " << endl;
+    cout << "   Inputs: " << endl;
     for (int i = 0; i < bit_size; ++i)
     {
         if (input_connections[i])
         {
-            cout << input_connections[i] << " "; // print out what is connected there may need to name LUTs/Inputs
+            cout << input_connections[i]->getName() << " "; // print out what is connected there may need to name LUTs/Inputs
         }
         else
         {
@@ -121,11 +136,11 @@ void LUT::printConnections() const
 
     if (output_connection)
     {
-        cout << "Output: " << output_connection << endl;
+        cout << "   Output: " << output_connection->getName() << endl;
     }
     else
     {
-        cout << "Output: X" << endl;
+        cout << "   Output: X" << endl;
     }
 }
 
@@ -144,8 +159,7 @@ vector<const LUT *> LUT::getInputConnections() const
     return input_connections;
 }
 
-
-LUT* LUT::getOutputConnection() const
+LUT *LUT::getOutputConnection() const
 {
     return output_connection;
 }
@@ -153,4 +167,19 @@ LUT* LUT::getOutputConnection() const
 const string &LUT::getName() const
 {
     return name;
+}
+
+bool LUT::getIsInput() const
+{
+    return is_input;
+}
+
+bool LUT::getIsOutput() const
+{
+    return is_output;
+}
+
+vector<string> LUT::getInputNames() const
+{
+    return input_names;
 }

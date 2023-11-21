@@ -245,7 +245,7 @@ bool isCoveredByMaxterm(string maxterm, string primeImplicant)
     return true;
 }
 
-bool evaluateProductTerm(const string &term, const string &binaryInput, const map<char, int> &inputMap)
+bool evaluateProductTerm(const string &term, const string &binaryInput, const map<string, int> &inputMap)
 {
     bool result = true;    // result starts as true because it is an AND operation
     bool negation = false; // flag for if variable is NOT'd
@@ -262,7 +262,7 @@ bool evaluateProductTerm(const string &term, const string &binaryInput, const ma
         }
 
         // use map to find index of the variable
-        auto iterator = inputMap.find(var);
+        auto iterator = inputMap.find(string(1, var));
         if (iterator == inputMap.end())
         {
             cerr << "Variable " << var << " not found in map." << endl;

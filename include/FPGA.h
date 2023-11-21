@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 #include "LUT.h"
 #include "../include/tools.h"
 
@@ -39,9 +40,43 @@ public:
     // Helper functions to generate bitstream
     string intToBinaryString(int num);
 
-    void padWithZeros(string& str, int max_size);
+    void padWithZeros(string &str, int max_size);
 
-private:
+    void readBitstreamFromFile(const string &filename);
+
+    void setLUTBooleanExpression(int lut_index, const string &expression);
+
+    bool evaluateLUT(int lut_index, const vector<bool> &inputs) const;
+
+    void setExternalInputs(const vector<bool> &inputs);
+
+    vector<bool> evaluateFPGA(const vector<bool> &externalInputs);
+
+    LUT *getLUT(int lut_index) const;
+
+    LUT *getInputLUT(int input_index) const;
+
+    LUT *getOutputLUT(int output_index) const;
+
+    void addInputs(string name);
+
+    void addOutputs(string name);
+
+    void makeConnections(vector<LUT *> luts);
+
+    vector<LUT *> getLUTs() const;
+
+    vector<LUT *> getInputLuts() const;
+
+    vector<LUT *> getOutputLuts() const;
+
+    void makeConnections(vector<LUT *> luts);
+
+    void makeFPGAFromTxt();
+
+    void resourseAllocation();
+
+protected:
     vector<LUT *> luts;
     vector<LUT *> input_luts;
     vector<LUT *> output_luts;
