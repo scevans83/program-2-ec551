@@ -12,7 +12,7 @@ int main()
     cout << "Generate Manually or from Bitstream?" << endl;
     cout << "(1/2)";
     cin >> decision;
-
+    FPGA fpga(4,4);
     if (decision == 1){
         cout << "How many inputs/outputs?" << endl;
         int num_inputs;
@@ -86,6 +86,7 @@ int main()
         FPGA fpga_input(num_Luts, lut_size);
 
         fpga_input.makeFPGAFromTxt();
+        fpga = fpga_input;
 
     }
     if(decision == 2){
@@ -94,7 +95,9 @@ int main()
         string bitstream_file;
         cin >> bitstream_file;
 
-        fpga_bit.readBitstreamFromFile(bitstream_file)
+        fpga_bit.readBitstreamFromFile(bitstream_file);
+        fpga = fpga_bit;
+
     }
     else{
         cout << "invalid input!" << endl;
