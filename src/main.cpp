@@ -40,6 +40,10 @@ int main()
     }
 
     cout << "Creating FPGA with " << num_Luts << " fully connected " << lut_size << "-bit LUTs with " << num_inputs << " inputs and " << num_outputs << " outputs..." << endl;
+    FPGA fpga(num_Luts, lut_size);
 
+    fpga.makeFPGAFromTxt();
+    
+    
     return 0;
 }

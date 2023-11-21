@@ -461,3 +461,29 @@ vector<LUT *> FPGA::getLUTs() const
 {
     return luts;
 }
+
+void FPGA::makeFPGAFromTxt(){
+    string file_name;
+    string expression;
+    int i = 0;
+    ifstream input;
+
+    cout << "Input file name: ";
+    cin >> file_name;
+    input.open(file_name);
+
+    if(input.fail()){
+        cout << "Error! The file doesn't exist!" << endl;
+        return;
+    }
+
+    while(input >> expression){
+        //cout << expression << endl;
+        setLUTBooleanExpression(i, expression);
+        i++;
+    }
+
+    input.close();
+    return;
+
+}

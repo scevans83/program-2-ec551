@@ -66,6 +66,10 @@ public:
 
     vector<LUT *> getLUTs() const;
 
+    void FPGA::makeConnections(vector<LUT *> luts);
+
+    void FPGA::makeFPGAFromTxt();
+
 protected:
     vector<LUT *> luts;
     vector<LUT *> input_luts;
