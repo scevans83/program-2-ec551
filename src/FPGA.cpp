@@ -372,12 +372,9 @@ LUT *FPGA::getLUT(int lut_index) const
     }
 }
 
-void FPGA::addInputs(int bit_size)
+void FPGA::addInputs(string name)
 {
-    for (int i = 0; i < bit_size; ++i)
-    {
-        input_luts.emplace_back(new LUT(true, "IN" + to_string(i)));
-    }
+    input_luts.emplace_back(new LUT(true, name));
 }
 
 LUT *FPGA::getInputLUT(int input_index) const
@@ -406,10 +403,7 @@ LUT *FPGA::getOutputLUT(int output_index) const
     }
 }
 
-void FPGA::addOutputs(int bit_size)
+void FPGA::addOutputs(string name)
 {
-    for (int i = 0; i < bit_size; ++i)
-    {
-        output_luts.emplace_back(new LUT(false, "OUT" + to_string(i)));
-    }
+    output_luts.emplace_back(new LUT(false, name));
 }

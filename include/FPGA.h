@@ -58,9 +58,9 @@ public:
 
     LUT *getOutputLUT(int output_index) const;
 
-    void addInputs(int bit_size);
+    void addInputs(string name);
 
-    void addOutputs(int bit_size);
+    void addOutputs(string name);
 
 protected:
     vector<LUT *> luts;
