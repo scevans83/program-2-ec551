@@ -105,6 +105,7 @@ void LUT::connectInput(int input_index, const LUT *source_LUT)
     if (input_index >= 0 && input_index < bit_size)
     {
         input_connections[input_index] = source_LUT;
+        cout << "Connecting " << input_index << " of " << name << " to " << source_LUT->getName() << endl;
     }
     else
     {
@@ -178,7 +179,7 @@ bool LUT::getIsOutput() const
     return is_output;
 }
 
-vector<char> LUT::getInputNames() const
+vector<string> LUT::getInputNames() const
 {
     return input_names;
 }

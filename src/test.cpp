@@ -17,18 +17,35 @@ void printBoolVec(const vector<bool> &vec)
 
 int main()
 {
-    // create LUT
-    LUT lut(4, "testLUT"); // 4 inputs, name = "testLUT"
+    int numLuts = 4;
+    int bitSize = 4;
+    int numInputs = 4;
+    int numOutputs = 4;
+    vector<string> inputs = {"a", "b", "c", "d"};
+    vector<string> outputs = {"F", "G", "H", "I"};
+    vector<string> expressions = {"F(a,b,c,d)=a*b+a*c+b*!c*d", "G(a,b,c,d)=a*b+a*c+b*!c*d", "H(a,b,c,d)=a*b+a*c+b*!c*d", "I(a,b,c,d)=a*b+a*c+b*!c*d"};
+    // create FPGA
+    FPGA fpga(4, 4);
+    // set inputs and outputs
+    for (auto name : inputs)
+    {
+        fpga.addInputs(name);
+    }
 
-    // it should work for 6 inputs also
+    for (auto name : outputs)
+    {
+        fpga.addOutputs(name);
+    }
 
-    // set boolean expression
-    // example: F(a,b,c,d)=a*b+a*c+b*!c*d
-    string expression;
-    cout << "Enter a 4-variable boolean expression: ";
-    cin >> expression;
+    // set expressions for each lut
+    for (int i = 0; i < numLuts; i++)
+    {
+        fpga.setLUTBooleanExpression(i, expressions[i]);
+    }
 
-    lut.setBooleanExpression(expression);
+    // connect inputs to luts with fpga::makeConnections
+    vector<LUT *> luts = fpga.getLUTs();
+    fpga.makeConnections(luts);
 
     // get all input combinations
     vector<vector<bool>> testInputs = {
@@ -50,7 +67,19 @@ int main()
         {1, 1, 1, 1}};
 
     // evaluate for all input combinations and print truth table
-    cout << "\nTesting LUT: " << lut.getName() << "\n\n";
+    cout << "\nTesting FPGA\n\n";
+    cout << "a b c d | F G H I" << endl;
+    cout << "--------+--------" << endl;
+    for (const auto &inputs : testInputs)
+    {
+        vector<bool> result = fpga.evaluateFPGA(inputs);
+        printBoolVec(inputs);
+        cout << "| ";
+        printBoolVec(result);
+        cout << endl;
+    }
+
+    /* cout << "\nTesting LUT: " << lut.getName() << "\n\n";
     cout << "a b c d | F" << endl;
     cout << "--------+--" << endl;
     for (const auto &inputs : testInputs)
@@ -59,7 +88,7 @@ int main()
         printBoolVec(inputs);
         cout << "| " << (result ? "1" : "0") << endl;
     }
+ */
 
-    
     return 0;
 }

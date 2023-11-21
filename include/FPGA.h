@@ -62,6 +62,10 @@ public:
 
     void addOutputs(string name);
 
+    void makeConnections(vector<LUT *> luts);
+
+    vector<LUT *> getLUTs() const;
+
 protected:
     vector<LUT *> luts;
     vector<LUT *> input_luts;

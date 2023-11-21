@@ -57,6 +57,8 @@ public:
 
     bool getIsOutput() const;
 
+    vector<string> getInputNames() const;
+
 private:
     string name;
     int bit_size;
