@@ -39,7 +39,81 @@ int main()
         return -1;
     }
 
-    cout << "Creating FPGA with " << num_Luts << " fully connected " << lut_size << "-bit LUTs with " << num_inputs << " inputs and " << num_outputs << " outputs..." << endl;
+    //create input variables vector from user input
+    string input_variables;
+    cout << "Enter comma-separated input variables: ";
+    getline(cin, input_variables);
 
+    vector<string> inputs;
+    string value1;
+
+    for(char c: input_variables){
+        if(c == ',' || c == '\n'){
+            inputs.push_back(value1);
+
+            value1.clear();
+        } else{
+            value1 += c;
+        }
+    }
+
+    //create output variables vector from user input
+    string output_variables;
+    cout << "Enter comma-separated output variables: ";
+    getline(cin, output_variables);
+
+    vector<string> outputs;
+    string value2;
+
+    for(char c: output_variables){
+        if(c == ',' || c == '\n'){
+            outputs.push_back(value2);
+
+            value2.clear();
+        } else{
+            value2 += c;
+        }
+    }
+
+
+    cout << "Creating FPGA with " << num_Luts << " fully connected " << lut_size << "-bit LUTs with " << num_inputs << " inputs and " << num_outputs << " outputs..." << endl;
+    FPGA fpga(num_Luts, lut_size);
+
+    fpga.makeFPGAFromTxt();
+
+    cout << endl;
+    cout << "--Functions assigned to the LUTs--" << endl;
+    vector<LUT *> luts = fpga.getLUTs();
+    for(int i = 0; i < luts.size(); ++i){
+        cout << "Expression assigned to LUT " << i << ": " << luts[i]->getName();
+    }
+
+    cout << endl;
+    cout << "--Internal Connections--" << endl;
+    fpga.printConnections();
+
+    cout << endl;
+    cout <<"--External Input Assignments--" << endl;
+    vector<LUT *> external_inputs = fpga.getInputLuts();
+    for(int i = 0; i < external_inputs.size(); ++i){
+        cout << "Input " << i << " is connected to variable " << external_inputs[i]->getName();
+    }
+
+    cout << endl;
+    cout <<"--External Output Assignments--" << endl;
+    vector<LUT *> external_outputs = fpga.getOutputLuts();
+    for(int i = 0; i < external_outputs.size(); ++i){
+        cout << "Output " << i << " is connected to variable " << external_outputs[i]->getName();
+    }
+
+    cout << endl;
+    cout <<"--Bitstream Written to File--" << endl;
+    fpga.writeBitstreamToFile();
+
+    cout << endl;
+    cout <<"--Resource Allocation Data--" << endl;
+    fpga.resourseAllocation();
+    
+    
     return 0;
 }

@@ -66,6 +66,16 @@ public:
 
     vector<LUT *> getLUTs() const;
 
+    vector<LUT *> getInputLuts() const;
+
+    vector<LUT *> getOutputLuts() const;
+
+    void makeConnections(vector<LUT *> luts);
+
+    void makeFPGAFromTxt();
+
+    void resourseAllocation();
+
 protected:
     vector<LUT *> luts;
     vector<LUT *> input_luts;
