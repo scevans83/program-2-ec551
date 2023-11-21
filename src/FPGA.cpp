@@ -1,4 +1,5 @@
 #include "../include/FPGA.h"
+
 FPGA::FPGA(int num_LUTs, int bit_size)
 {
     for (int i = 0; i < num_LUTs; ++i)
@@ -6,6 +7,7 @@ FPGA::FPGA(int num_LUTs, int bit_size)
         addLUT(bit_size, "LUT" + to_string(i));
     }
 }
+
 FPGA::~FPGA()
 {
     for (auto lut : luts)
@@ -13,10 +15,12 @@ FPGA::~FPGA()
         delete lut;
     }
 }
+
 void FPGA::addLUT(int bit_size, const string &name)
 {
     luts.emplace_back(new LUT(bit_size, name));
 }
+
 void FPGA::connectInputToLUT(int lut_index, int input_index, const LUT *source_LUT)
 {
     if (lut_index >= 0 && lut_index < luts.size())
@@ -28,6 +32,7 @@ void FPGA::connectInputToLUT(int lut_index, int input_index, const LUT *source_L
         cerr << "Invalid LUT input connection" << endl;
     }
 }
+
 void FPGA::connectOutputOfLUT(int source_LUT_index, LUT *target_LUT)
 {
     if (source_LUT_index >= 0 && source_LUT_index < luts.size())
@@ -39,6 +44,7 @@ void FPGA::connectOutputOfLUT(int source_LUT_index, LUT *target_LUT)
         cerr << "Invalid LUT output connection";
     }
 }
+
 void FPGA::printConnections() const
 {
     //cout << "FPGA Connections:" << endl;
@@ -48,6 +54,7 @@ void FPGA::printConnections() const
         luts[i]->printConnections();
     }
 }
+
 /*
 General bitstream structure
 3 bits: bitsize (either 4 or 6)
@@ -68,13 +75,15 @@ string FPGA::generateBitstream()
     int max_bits_num_Inputs = 10;
     int max_bits_num_Outputs = 10;
     // Add the size of the LUTs in binary 4(100) or 6(110)
-    bit_stream += intToBinaryString(luts[0]->getBitSize());
+    bit_stream = intToBinaryString(luts[0]->getBitSize());
+    cout << "added bit size: " << bit_stream << endl;
     // Convert num of LUTs to string
     num_Luts = intToBinaryString(luts.size());
     // Pad num of LUTs with zeros
     padWithZeros(num_Luts, max_bits_num_Luts);
     // Add padded num of LUTs to bitstream
-    bit_stream += num_Luts;
+    bit_stream.append(num_Luts);
+    cout << "added num luts (" << luts.size() << "): " << bit_stream << endl;
     // Convert num of inputs to string
     num_Inputs = intToBinaryString(external_inputs.size());
     // Pad num of inputs with zeros
@@ -82,80 +91,78 @@ string FPGA::generateBitstream()
     // Add padded num of inputs to bitstream
     bit_stream += num_Inputs;
     // Convert num of outputs to string
-    num_Outputs = intToBinaryString(external_outputs.size());
+    num_Outputs = intToBinaryString(output_luts.size());
     // Pad num of outputs with zeros
     padWithZeros(num_Outputs, max_bits_num_Outputs);
     // Add padded num of outputs to bitstream
     bit_stream += num_Outputs;
     // calculate number of total luts, inputs, and ouputs for mapping
     int input_connections_size = (luts.size() + external_inputs.size());
-    int output_connections_size = (luts.size() + external_outputs.size());
+    int output_connections_size = (luts.size() + output_luts.size());
     // iterate over each lut
     // compare its inputs' names to the lut names and external input names
     // where they match add the index and then covert all '0' at those indexes to '1'
+    // Iterate over each LUT
     for (int i = 0; i < luts.size(); ++i)
     {
         // Convert TT to string and add to bitstream
         string truth_table_string = convertBoolVecToString(luts[i]->getTruthTable());
         bit_stream += truth_table_string;
-        // Convert inputs to string of 1's located at connections (LUTs then external inputs)
-        string input_connections = string(input_connections_size, '0');
-        vector<int> input_connection_indexes;
+
+        // Handle each input connection
         vector<const LUT *> lut_i_input_connections = luts[i]->getInputConnections();
         for (int j = 0; j < lut_i_input_connections.size(); ++j)
         {
-            // check if input matches any in LUTs
+            string input_connections = string(input_connections_size, '0');
             for (int k = 0; k < luts.size(); ++k)
             {
                 if (lut_i_input_connections[j]->getName() == luts[k]->getName())
                 {
-                    input_connection_indexes.push_back(k);
+                    input_connections[k] = '1'; // Set the bit for internal LUT connection
+                    break;
                 }
             }
-            // check if input matches any inputs
             for (int k = 0; k < input_luts.size(); ++k)
             {
                 if (lut_i_input_connections[j]->getName() == input_luts[k]->getName())
                 {
-                    input_connection_indexes.push_back(k + luts.size()); // add size of luts since luts come before external signals
+                    input_connections[k + luts.size()] = '1'; // Set the bit for external input connection
+                    break;
+                }
+            }
+            cout << "input connections: "
+                 << "LUT" << i << " input " << j << " (" << lut_i_input_connections[j]->getName() << "): " << input_connections << endl;
+            bit_stream += input_connections; // Add input encoding to bitstream
+        }
+
+        // Handle output connection
+        string output_connections = string(output_connections_size, '0');
+        LUT *lut_i_output_connection = luts[i]->getOutputConnection();
+        if (lut_i_output_connection)
+        {
+            for (int j = 0; j < luts.size(); ++j)
+            {
+                if (lut_i_output_connection->getName() == luts[j]->getName())
+                {
+                    output_connections[j] = '1'; // Set the bit for internal LUT connection
+                }
+            }
+            for (int j = 0; j < output_luts.size(); ++j)
+            {
+                if (lut_i_output_connection->getName() == output_luts[j]->getName())
+                {
+                    output_connections[j + luts.size()] = '1'; // Set the bit for external output connection
                 }
             }
         }
-        // replace '0's with '1' at indexes
-        for (int j = 0; j < input_connection_indexes.size(); ++j)
-        {
-            input_connections[input_connection_indexes[j]] = '1';
-        }
-        // add input encoding to bitstream
-        bit_stream += input_connections;
-        // convert output to string of 0's with 1 located at connection point
-        string output_connections = string(output_connections_size, '0');
-        int output_connection_index;
-        LUT *lut_i_output_connection = luts[i]->getOutputConnection();
-        // Check if connection is in luts and add index
-        for (int j = 0; j < luts.size(); ++j)
-        {
-            if (lut_i_output_connection->getName() == luts[j]->getName())
-            {
-                output_connection_index = j;
-            }
-        }
-        cout << "debug: this is the part where it adds indices for external inputs" << endl;
-        // check if connection is an output and add index
-        for (int j = 0; j < output_luts.size(); ++j)
-        {
-            if (lut_i_output_connection->getName() == output_luts[j]->getName())
-            {
-                output_connection_index = (j + luts.size()); // add size of luts since luts come before external signals
-            }
-        }
-        output_connections[output_connection_index] = '1';
-        // add output encoding to bitstream
-        bit_stream += output_connections;
+        cout << "output connections: "
+             << "LUT" << i << " (" << luts[i]->getName() << "): " << output_connections << endl;
+        bit_stream += output_connections; // Add output encoding to bitstream
     }
     cout << bit_stream << endl;
     return bit_stream;
 }
+
 void FPGA::writeBitstreamToFile()
 {
     string file_name;
@@ -167,18 +174,21 @@ void FPGA::writeBitstreamToFile()
     output << generateBitstream() << endl;
     output.close();
 }
+
 string FPGA::intToBinaryString(int num)
 {
+    if (num == 0)
+        return "0";
+
     string binary_string;
-    // Determine num of bits needed
-    int num_bits = sizeof(int) * 8;
-    // Extract bits
-    for (int i = num_bits - 1; i >= 0; --i)
+    while (num > 0)
     {
-        binary_string += ((num >> i) & 1) ? '1' : '0';
+        binary_string = (num % 2 == 0 ? "0" : "1") + binary_string;
+        num /= 2;
     }
     return binary_string;
 }
+
 void FPGA::padWithZeros(string &str, int max_size)
 {
     if (str.size() < max_size)
@@ -189,6 +199,7 @@ void FPGA::padWithZeros(string &str, int max_size)
         str.insert(0, zeros_to_add, '0');
     }
 }
+
 void FPGA::readBitstreamFromFile(const string &filename)
 {
     ifstream input(filename);
@@ -218,6 +229,14 @@ void FPGA::readBitstreamFromFile(const string &filename)
         int numInputs = stoi(bitstream.substr(pos, 10), nullptr, 2);
         pos += 10;
         int numOutputs = stoi(bitstream.substr(pos, 10), nullptr, 2);
+        for (int i = 0; i < numInputs; i++)
+        {
+            addInputs("input" + to_string(i));
+        }
+        for (int i = 0; i < numOutputs; i++)
+        {
+            addOutputs("output" + to_string(i));
+        }
         pos += 10;
         // construct LUTs and connections
         for (int i = 0; i < numLUTs; i++)
@@ -237,12 +256,76 @@ void FPGA::readBitstreamFromFile(const string &filename)
             luts[i]->setTruthTable(truthTable);
         }
         // construct connections between LUTs
+        // ... [existing code in readBitstreamFromFile] ...
+
+        // construct connections between LUTs
+        int input_connections_size = luts.size() + input_luts.size();
+        int output_connections_size = luts.size() + output_luts.size();
+
+        for (int i = 0; i < numLUTs; ++i)
+        {
+            // Handle each input connection
+            for (int j = 0; j < luts[i]->getBitSize(); ++j)
+            {
+                string input_connection_bits = bitstream.substr(pos, input_connections_size);
+                pos += input_connections_size;
+
+                cout << "debug: "
+                     << "lut " << i << " input " << j << " connection bits: " << input_connection_bits << endl;
+
+                // Check each bit for a connection
+                for (int k = 0; k < input_connections_size; ++k)
+                {
+                    if (input_connection_bits[k] == '1')
+                    {
+                        if (k < luts.size())
+                        {
+                            // Connect to an internal LUT
+                            connectInputToLUT(i, j, luts[k]);
+                        }
+                        else
+                        {
+                            // Connect to an external input LUT
+                            connectInputToLUT(i, j, input_luts[k - luts.size()]);
+                        }
+                        break; // Only one connection per input, so break after finding it
+                    }
+                }
+            }
+
+            // Handle the output connection
+            string output_connection_bits = bitstream.substr(pos, output_connections_size);
+            pos += output_connections_size;
+
+            cout << "debug: "
+                 << "lut " << i << " output connection bits: " << output_connection_bits << endl;
+
+            for (int j = 0; j < output_connections_size; ++j)
+            {
+                if (output_connection_bits[j] == '1')
+                {
+                    if (j < luts.size())
+                    {
+                        // Connect the output to an internal LUT
+                        connectOutputOfLUT(i, luts[j]);
+                    }
+                    else
+                    {
+                        // Connect the output to an external output LUT
+                        connectOutputOfLUT(i, output_luts[j - luts.size()]);
+                    }
+                }
+            }
+        }
+
+        // ... [rest of the code] ...
     }
     else
     {
         cerr << "Failed to open bitstream file: " + filename << endl;
     }
 }
+
 void FPGA::setLUTBooleanExpression(int lut_index, const string &expression)
 {
     if (lut_index >= 0 && lut_index < luts.size())
@@ -517,3 +600,4 @@ void FPGA::resourseAllocation(){
     cout << "% Connection utilized: " << ((num_connections/(luts.size()*(luts[0]->getBitSize() + 1))) * 100) << endl;
     cout << "Total memory usage: " << (luts.size() * luts[0]->getBitSize()) << endl;
 }
+
