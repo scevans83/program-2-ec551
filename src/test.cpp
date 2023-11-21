@@ -23,7 +23,7 @@ int main()
     int numOutputs = 4;
     vector<string> inputs = {"a", "b", "c", "d"};
     vector<string> outputs = {"F", "G", "H", "I"};
-    vector<string> expressions = {"F(a,b,c,d)=a*b+a*c+b*!c*d", "G(a,b,c,d)=a*b+a*c+b*!c*d", "H(a,b,c,d)=a*b+a*c+b*!c*d", "I(a,b,c,d)=a*b+a*c+b*!c*d"};
+    vector<string> expressions = {"F(a,b,c,d)=a*b+a*c+b*!c*d", "G(a,b,c,F)=a*b+a*c+b*!c*F", "H(a,b,c,d)=a*b+a*c+b*!c*d", "I(a,b,c,d)=a*b+a*c+b*!c*d"};
     // create FPGA
     FPGA fpga(4, 4);
     // set inputs and outputs
@@ -79,6 +79,22 @@ int main()
         cout << endl;
     }
 
+    // generate bitstream
+    // string bitstream = fpga.generateBitstream();
+    fpga.writeBitstreamToFile();
+    fpga.readBitstreamFromFile("bitstream.txt");
+
+    cout << "\nTesting FPGA from Bitstream\n\n";
+    cout << "a b c d | F G H I" << endl;
+    cout << "--------+--------" << endl;
+    for (const auto &inputs : testInputs)
+    {
+        vector<bool> result = fpga.evaluateFPGA(inputs);
+        printBoolVec(inputs);
+        cout << "| ";
+        printBoolVec(result);
+        cout << endl;
+    }
     /* cout << "\nTesting LUT: " << lut.getName() << "\n\n";
     cout << "a b c d | F" << endl;
     cout << "--------+--" << endl;
