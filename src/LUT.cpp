@@ -120,7 +120,7 @@ void LUT::connectOutput(LUT *target_LUT)
 
 void LUT::printConnections() const
 {
-    cout << "Inputs: " << endl;
+    cout << "   Inputs: " << endl;
     for (int i = 0; i < bit_size; ++i)
     {
         if (input_connections[i])
@@ -136,11 +136,11 @@ void LUT::printConnections() const
 
     if (output_connection)
     {
-        cout << "Output: " << output_connection->getName() << endl;
+        cout << "   Output: " << output_connection->getName() << endl;
     }
     else
     {
-        cout << "Output: X" << endl;
+        cout << "   Output: X" << endl;
     }
 }
 

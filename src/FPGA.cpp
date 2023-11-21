@@ -41,7 +41,7 @@ void FPGA::connectOutputOfLUT(int source_LUT_index, LUT *target_LUT)
 }
 void FPGA::printConnections() const
 {
-    cout << "FPGA Connections:" << endl;
+    //cout << "FPGA Connections:" << endl;
     for (size_t i = 0; i < luts.size(); ++i)
     {
         cout << "LUT number " << i << "'s connections: " << endl;
@@ -486,4 +486,34 @@ void FPGA::makeFPGAFromTxt(){
     input.close();
     return;
 
+}
+
+vector<LUT *> FPGA::getInputLuts() const
+{
+    return input_luts;
+}
+    
+vector<LUT *> FPGA::getOutputLuts() const
+{
+    return output_luts;
+}
+
+void FPGA::resourseAllocation(){
+    int used_luts;
+    int num_connections;
+    for(int i = 0; i < luts.size(); ++i){
+        string name = luts[i]->getName();
+        if(name.substr(0,3) != "LUT"){
+            used_luts++;
+            num_connections += luts[i]->getInputNames().size(); //add num of input connections
+            if(luts[i]->getOutputConnection() != NULL){
+                num_connections++; //add 1 if there is an output connection
+            }
+        }
+        
+    }
+
+    cout << "% LUTs utilized: " << ((used_luts/luts.size()) * 100) << endl;
+    cout << "% Connection utilized: " << ((num_connections/(luts.size()*(luts[0]->getBitSize() + 1))) * 100) << endl;
+    cout << "Total memory usage: " << (luts.size() * luts[0]->getBitSize()) << endl;
 }
